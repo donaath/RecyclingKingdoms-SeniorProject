@@ -1,83 +1,89 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
-public class CharacterManager : MonoBehaviour
-    
+namespace CharacterSelector.Scripts
 {
-    public CharacterDatabase characterDB;
-    public SpriteRenderer artworkSprite;
-
-    private int selectedOption=0;
-    // Start is called before the first frame update
-    void Start()
+    public class CharacterManager : SingletonBase<CharacterManager>
     {
-        if (!PlayerPrefs.HasKey("selectedOption"))
+        public CharacterInfo[] Characters;
+
+        public GameObject SpawnPoint;
+
+        private int _currentIndex = 0;
+
+        private CharacterInfo _currentCharacterType = null;
+
+        private CharacterInfo _currentCharacter = null;
+
+        protected override void Init()
         {
-            selectedOption = 0;
-
-        
+            Persist = true;
+            base.Init();
         }
-        else
+
+        public void Start()
         {
-
-            Load();
-        }
-        UpdateCharacter(selectedOption);
-    }
-    public void NextOption() {
-        selectedOption++;
-        if(selectedOption >= characterDB.CharacterCount) {
-
-
-            selectedOption = 0;
+            if (SpawnPoint != null)
+            {
+                SetCurrentCharacterType(_currentIndex);
+            }
         }
 
-        UpdateCharacter(selectedOption);
-        Save();
-
-    }
-
-    public void BackOption ()
-    {
-        selectedOption--;
-        if (selectedOption<0)
+        public void SetCurrentCharacterType(int index)
         {
-            selectedOption= characterDB.CharacterCount-1;
+            if (_currentCharacterType != null)
+            {
+                Destroy(_currentCharacterType.gameObject);
+            }
 
+            CharacterInfo character = Characters[index];
+            _currentCharacterType = Instantiate<CharacterInfo>(
+                character,
+                SpawnPoint.transform.position,
+                Quaternion.identity
+            );
+
+            _currentIndex = index;
         }
 
-        UpdateCharacter(selectedOption);
-        Save();
+        public void SetCurrentCharacterType(string name)
+        {
+            int idx = 0;
+            foreach (CharacterInfo characterInfo in Characters)
+            {
+                if (
+                    characterInfo.CharacterID.Equals(
+                        name,
+                        System.StringComparison.InvariantCultureIgnoreCase
+                    )
+                )
+                {
+                    SetCurrentCharacterType(idx);
+                    break;
+                }
+                idx++;
+            }
+        }
 
+        public void CreateCurrentCharacter(string name)
+        {
+            _currentCharacter = Instantiate<CharacterInfo>(
+                _currentCharacterType,
+                SpawnPoint.transform.position,
+                Quaternion.identity
+            );
 
+            _currentCharacter.gameObject.SetActive(false);
+            _currentCharacter.Name = name;
+
+            DontDestroyOnLoad(_currentCharacter);
+        }
+
+        public CharacterInfo GetCurrentCharacter()
+        {
+            return _currentCharacter;
+        }
     }
-    private void UpdateCharacter(int selectedOption)
-    {
-
-
-        Character character= characterDB.GetCharacter(selectedOption);
-        artworkSprite.sprite = character.characterSprite;
-
-
-    }
-
-    private void Load()
-    {
-
-        selectedOption = PlayerPrefs.GetInt("selectedOption");
-
-    }
-    private void Save()
-    {
-        PlayerPrefs.SetInt("selectedOption", selectedOption);
-    }
-  public void ChangeScane(string scane)
-    {
-
-        SceneManager.LoadScene(scane);
-    }
-
 }
