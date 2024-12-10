@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: db188262e72dc8746ba4c48ff8c6b7b0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - points: {instanceID: 0}
+  - levelprefab: {fileID: 5414257253629181335, guid: 96267919918fb3c438509097e840c8f9, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
