@@ -174,11 +174,6 @@ public class TimerModeManager : MonoBehaviour
             audioSource.PlayOneShot(comboBonusSound); // Play combo sound
             recycleStreak = 0; // Reset streak
         }
-        else if (recycleStreak > 3)
-        {
-            gameTime += 5; //increase the bonus time after multiple combos
-        }
-
         UpdateTimerDisplay();
     }
 
