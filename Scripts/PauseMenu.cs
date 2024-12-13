@@ -4,14 +4,13 @@ using UnityEngine;
 public class PauseMenu : MonoBehaviour
 {
     [SerializeField] GameObject pauseMenu;
-    public TimerModeManager timerModeManager; // Reference to the TimerModeManager script
+    public TimerModeManager timerModeManager; 
 
-    // Pauses the game and displays the pause menu
     public void Pause()
     {
-        TimerModeManager.isPaused = true; // Set the pause flag to true
+        TimerModeManager.isPaused = true; 
         Time.timeScale = 0f; // Stop the game time
-        pauseMenu.SetActive(true); // Show the pause menu
+        pauseMenu.SetActive(true); 
 
         // Stop all sounds in the TimerModeManager
         if (timerModeManager != null)
@@ -22,14 +21,14 @@ public class PauseMenu : MonoBehaviour
         }
     }
 
-    // Resumes the game and hides the pause menu
+    
     public void Resume()
     {
-        TimerModeManager.isPaused = false; // Set the pause flag to false
-        Time.timeScale = 1f; // Resume the game time
-        pauseMenu.SetActive(false); // Hide the pause menu
+        TimerModeManager.isPaused = false; 
+        Time.timeScale = 1f;
+        pauseMenu.SetActive(false); 
 
-        // Resume all sounds in the TimerModeManager
+        
         if (timerModeManager != null)
         {
             if (timerModeManager.audioSource != null) timerModeManager.audioSource.UnPause();
