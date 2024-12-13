@@ -14,16 +14,14 @@ public class Item : MonoBehaviour
 
     void Start()
     {
-        // Find the TimerModeManager script in the scene to call its methods
         modeManager = FindObjectOfType<TimerModeManager>();
     }
 
     // This method checks if the item is tapped using raycasting
     public void OnItemTapped()
     {
-        if (modeManager == null) return; // Ensure TimerModeManager is available
+        if (modeManager == null) return; 
 
-        // Call the appropriate method based on whether the item is recyclable or not
         if (isRecyclable)
         {
             modeManager.OnRecyclableItemClicked(); // Call method to handle recyclable item collection
