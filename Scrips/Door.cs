@@ -49,14 +49,11 @@ namespace DoorScript
 
         private IEnumerator LoadNextScene()
         {
-            // Wait for the door to fully open (adjust time as necessary)
             float doorOpenTime = 1.0f; // Time it takes for the door to open fully
             yield return new WaitForSeconds(doorOpenTime);
 
-            // Wait for the sound to finish playing
             yield return new WaitForSeconds(asource.clip.length);
 
-            // Now load the next scene
             SceneManager.LoadScene("PetStateV2");
         }
     }
