@@ -1,29 +1,39 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SkipVideo : MonoBehaviour
 {
-    public Button Button; 
+    public Button Button;
 
-    void Start()
+    private void Start()
     {
-        Button.gameObject.SetActive(false); // Disable the button at the start
-        StartCoroutine(EnableButtonAfterDelay());
+        if (Button == null)
+        {
+            Debug.LogError("Button is not assigned in the Inspector.");
+            return;
+        }
+
+        // Ensure this GameObject is active before starting the coroutine
+        if (gameObject.activeInHierarchy)
+        {
+            StartCoroutine(EnableButtonAfterDelay());
+        }
+        else
+        {
+            Debug.LogError("Skip GameObject is inactive. Coroutine cannot start.");
+        }
     }
 
-    IEnumerator EnableButtonAfterDelay()
+    private IEnumerator EnableButtonAfterDelay()
     {
-        yield return new WaitForSeconds(10.0f); // the delay time to 10 seconds
+        yield return new WaitForSeconds(10.0f); // Wait for 10 seconds
         Button.gameObject.SetActive(true); // Enable the button after the delay
     }
-    public void skip() {
 
-        SceneManager.LoadScene("stateOfPet");
+    public void Skip()
+    {
+        SceneManager.LoadScene(8);
     }
-  
-
-    
 }

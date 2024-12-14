@@ -1,10 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections;
 using UnityEngine.Video;
-using System.Collections.Generic;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -36,10 +36,7 @@ public class DialogueManager : MonoBehaviour
         videoPlayer.Stop();
         videoPlayer.gameObject.SetActive(false);
         rawImageGameObject.SetActive(false);
- 
     }
-
- 
 
     public void StartDialogue(Dialogue dialogue)
     {
@@ -124,7 +121,6 @@ public class DialogueManager : MonoBehaviour
         GoToARScene();
     }
 
-
     private void SkipVideo()
     {
         Debug.Log("Video skipped by user.");
@@ -137,7 +133,6 @@ public class DialogueManager : MonoBehaviour
         GoToARScene(); // Transition to the AR scene
     }
 
-
     private void GoToARScene()
     {
         string currentScene = SceneManager.GetActiveScene().name;
@@ -148,25 +143,12 @@ public class DialogueManager : MonoBehaviour
             GameStateManager.Instance.PreviousScene = currentScene;
         }
 
-        SceneManager.LoadSceneAsync("ArScene");
+        SceneManager.LoadSceneAsync(6);
     }
-
-
-
 
     void EndDialogue()
     {
         animator.SetBool("IsOpen", false);
-        joystickLeft.SetActive(true);
-        joystickRight.SetActive(true);
+        SceneManager.LoadSceneAsync(6);
     }
-
-  
-   
-
-   
-   
 }
-
-
-
