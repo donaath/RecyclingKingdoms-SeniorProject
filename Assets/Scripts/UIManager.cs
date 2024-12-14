@@ -36,16 +36,19 @@ public class UIManager : MonoBehaviour
         Panel3.SetActive(false);
         Panel4.SetActive(false);
         Panel5.SetActive(false);
+        Panel6.SetActive(false);
+        Panel7.SetActive(false);
+        Panel8.SetActive(false);
 
         panelToOpen.SetActive(true);
         Debug.Log("Buton Clicked");
     }
 
-    public void OnLRSceneButtonClick() => SceneManager.LoadScene(0);
+    // public void OnLRSceneButtonClick() => SceneManager.LoadScene(0);
 
-    public void OnCharacterSceneButtonClick() => SceneManager.LoadScene(1);
+    // public void OnCharacterSceneButtonClick() => SceneManager.LoadScene(1);
 
-    public void OnPetSceneButtonClick() => SceneManager.LoadScene(2);
+    // public void OnPetSceneButtonClick() => SceneManager.LoadScene(2);
 
     public void OnMainSceneButtonClick() => SceneManager.LoadScene(3);
 
@@ -53,15 +56,17 @@ public class UIManager : MonoBehaviour
 
     public void OnQuestSceneButtonClick() => SceneManager.LoadScene(5);
 
-    public void OnQtARSceneButtonClick() => SceneManager.LoadScene(6);
+    public void OnQMapSceneButtonClick() => SceneManager.LoadScene(6);
 
-    public void OnQARSceneButtonClick() => SceneManager.LoadScene(7);
+    public void OnQSSceneButtonClick() => SceneManager.LoadScene(7);
 
     public void OnLvlSceneButtonClick() => SceneManager.LoadScene(8);
 
-    public void OnLvlARSceneButtonClick() => SceneManager.LoadScene(9);
+    public void OnTARSceneButtonClick() => SceneManager.LoadScene(9);
 
-    public void OnTARSceneButtonClick() => SceneManager.LoadScene(10);
+    public void OnLvlARSceneButtonClick() => SceneManager.LoadScene(10);
+
+    public void OnQARSceneButtonClick() => SceneManager.LoadScene(11);
 
     public void OnCharacterOneButtonClick() => OpenPanel(Panel3);
 
@@ -77,13 +82,13 @@ public class UIManager : MonoBehaviour
 
     public void OnStartButtonClick() => OpenPanel(Panel7);
 
-    // public void OnShowNotifButtonClick()
-    // {
-    //     Panel5.SetActive(true);
-    // }
+    public void OnShowNotifButtonClick()
+    {
+        Panel6.SetActive(true);
+    }
 
     public void OnCloseNotifButtonClick()
     {
-        Panel5.SetActive(false);
+        Panel6.SetActive(false);
     }
 }

@@ -1,65 +1,141 @@
-using System.Collections;
-using System.Collections.Generic;
+﻿using Firebase.Auth;
+using Firebase.Database;
+using Firebase.Extensions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-public class PetManager : MonoBehaviour
+
+namespace CharacterSelector.Scripts
 {
-    public PetDatabase petDB;
-    public SpriteRenderer petSpriteRenderer;
-    private int selectedPetIndex = 0;
-    void Start()
+    public class PetManager : SingletonBase<PetManager>
     {
-        if (!PlayerPrefs.HasKey("selectedPetIndex"))
+        public PetInfo[] Pets;
+
+        public GameObject SpawnPoint;
+
+        private int _currentIndex = 0;
+        private PetInfo _currentPetType = null;
+        private PetInfo _currentPet = null;
+
+        private FirebaseDatabase _database;
+        private DatabaseReference _databaseReference;
+
+        protected override void Init()
         {
-            selectedPetIndex = 0;
+            Persist = true;
+            base.Init();
+
+            // Initialize Firebase Database
+            _database = FirebaseDatabase.DefaultInstance;
+            _databaseReference = _database.RootReference;
         }
-        else
+
+        public void Start()
         {
-            Load();
+            if (SpawnPoint != null)
+            {
+                SetCurrentPetType(_currentIndex);
+            }
         }
-        UpdatePet(selectedPetIndex);
-    }
-    public void NextPet()
-    {
-        selectedPetIndex++;
-        if (selectedPetIndex >= petDB.PetCount)
+
+        // Set the pet type based on index
+        public void SetCurrentPetType(int index)
         {
-            selectedPetIndex = 0;
-        }
-        UpdatePet(selectedPetIndex);
-        Save();
-    }
+            if (_currentPetType != null)
+            {
+                Destroy(_currentPetType.gameObject);
+            }
 
-    public void PreviousPet()
-    {
-        selectedPetIndex--;
-        if (selectedPetIndex < 0)
+            PetInfo pet = Pets[index];
+            _currentPetType = Instantiate<PetInfo>(
+                pet,
+                SpawnPoint.transform.position,
+                Quaternion.identity
+            );
+            _currentIndex = index;
+        }
+
+        // Set pet type by name (ID)
+        public void SetCurrentPetType(string name)
         {
-            selectedPetIndex = petDB.PetCount - 1;
+            int idx = 0;
+            foreach (PetInfo petInfo in Pets)
+            {
+                if (petInfo.PetID.Equals(name, System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    SetCurrentPetType(idx); // Correct the method call here
+                    break;
+                }
+                idx++;
+            }
         }
-        UpdatePet(selectedPetIndex);
-        Save();
-    }
 
-    private void UpdatePet(int index)
-    {
-        Pet pet = petDB.GetPet(index);
-        petSpriteRenderer.sprite = pet.petSprite;
-    }
+        // Create current pet and save it to the database
+        public void CreateCurrentPet()
+        {
+            if (_currentPetType == null)
+            {
+                Debug.LogError("No pet selected.");
+                return;
+            }
 
-    private void Load()
-    {
-        selectedPetIndex = PlayerPrefs.GetInt("selectedPetIndex");
-    }
+            _currentPet = Instantiate<PetInfo>(
+                _currentPetType,
+                SpawnPoint.transform.position,
+                Quaternion.identity
+            );
+            _currentPet.gameObject.SetActive(false); // Optionally keep it inactive
 
-    private void Save()
-    {
-        PlayerPrefs.SetInt("selectedPetIndex", selectedPetIndex);
-    }
+            DontDestroyOnLoad(_currentPet);
 
-    public void ChangeScene(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-    }
-}  
+            SavePetToDatabase(_currentPet);
+        }
 
+        // Get the current pet
+        public PetInfo GetCurrentPet()
+        {
+            return _currentPet;
+        }
+
+        // Method to create and save the pet
+        public void CreatePet(string petID, string description)
+        {
+            // Create the pet instance with the given values
+            PetInfo newPet = new PetInfo(petID, description);
+
+            // Save the pet to Firebase
+            SavePetToDatabase(newPet);
+        }
+
+        // Method to save the pet to Firebase
+        private void SavePetToDatabase(PetInfo pet)
+        {
+            string userId = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                Debug.LogError("User is not logged in. Cannot save pet.");
+                return;
+            }
+
+            // Save the pet object in Firebase under the user's ID
+            DatabaseReference reference = FirebaseDatabase.DefaultInstance.RootReference;
+            reference
+                .Child("users")
+                .Child(userId)
+                .Child("pet")
+                .Child(pet.PetID) // Save by petID to prevent overwriting
+                .SetRawJsonValueAsync(JsonUtility.ToJson(pet)) // Convert the object to JSON
+                .ContinueWithOnMainThread(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        Debug.LogError("Failed to save pet: " + task.Exception);
+                    }
+                    else
+                    {
+                        Debug.Log("Pet saved successfully.");
+                    }
+                });
+        }
+    }
+}

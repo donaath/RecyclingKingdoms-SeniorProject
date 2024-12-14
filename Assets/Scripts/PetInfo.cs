@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterInfo : MonoBehaviour
+public class PetInfo : MonoBehaviour
 {
-    public string CharacterID;
+    public string PetID;
 
     [HideInInspector]
     public string Description;
 
-    public CharacterInfo(string characterID, string description)
+    public PetInfo(string petID, string description)
     {
-        this.CharacterID = characterID;
+        this.PetID = petID;
         this.Description = description;
     }
 }
